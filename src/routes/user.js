@@ -36,7 +36,8 @@ router.get("/user/:userID", async (req, res) => {
 
 router.post("/register", async (req, res) => {
     const { email, password, } = req.body
-    let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: email })
+    let emailD = email.trim()
+    let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: emailD })
 
     if (user) {
         return res.json({ message: "user already exists!", valid:false, userExist: true })
@@ -44,7 +45,7 @@ router.post("/register", async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 15)
         db.get().collection(collection.USER_COLLECTION).insertOne(
             {
-                email: email,
+                email: emailD,
                 password: hashPassword,
                 icon: '',
                 name: '',
@@ -56,7 +57,7 @@ router.post("/register", async (req, res) => {
                 savedPost: [],
                 verify: false
             })
-        mailer.sendEmail(email)
+        mailer.sendEmail(emailD)
         return res.json({
             message: "Verification is send to Your registered Email",
             valid:true
@@ -96,7 +97,8 @@ router.get("/verify/:token/:email", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const { email, password } = req.body
-    const user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: email })
+    let emailD = email.trim()
+    const user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: emailD })
 
     if (!user) {
         res.json({ message: "User don't exist!", valid: false })
@@ -110,7 +112,7 @@ router.post("/login", async (req, res) => {
                 const token = jwt.sign({ id: user._id }, jwtToken, { expiresIn: '1h' })
                 res.json({ token, userID: user._id, validPassword: true, name: user.name })
             } else {
-                mailer.sendEmail(email)
+                mailer.sendEmail(emailD)
                 res.json({ message: "Check Your Registered Email For Verify..!", verify: user.verify, valid:true })
             }
         }
