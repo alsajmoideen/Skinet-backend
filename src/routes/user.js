@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
     let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: email })
 
     if (user) {
-        return res.json({ message: "user already exists!", valid, userExist: true })
+        return res.json({ message: "user already exists!", valid:false, userExist: true })
     } else {
         const hashPassword = await bcrypt.hash(password, 15)
         db.get().collection(collection.USER_COLLECTION).insertOne(
@@ -59,7 +59,7 @@ router.post("/register", async (req, res) => {
         mailer.sendEmail(email)
         return res.json({
             message: "Verification is send to Your registered Email",
-            valid
+            valid:true
         })
     }
 
