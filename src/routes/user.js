@@ -38,36 +38,31 @@ router.post("/register", async (req, res) => {
     const { email, password, } = req.body
     let user = await db.get().collection(collection.USER_COLLECTION).findOne({ email: email })
 
-    const { valid, reason, validators } = await isEmailValid(email);
-    console.log(isEmailValid(email))
-    if (valid) {
-        if (user) {
-            return res.json({ message: "user already exists!", valid, userExist: true })
-        } else {
-            const hashPassword = await bcrypt.hash(password, 15)
-            db.get().collection(collection.USER_COLLECTION).insertOne(
-                {
-                    email: email,
-                    password: hashPassword,
-                    icon: '',
-                    name: '',
-                    domain: '',
-                    bio: '',
-                    portfolioLink: '',
-                    workList: [],
-                    postList: [],
-                    savedPost: [],
-                    verify: false
-                })
-            mailer.sendEmail(email)
-            return res.json({
-                message: "Verification is send to Your registered Email",
-                valid
-            })
-        }
+    if (user) {
+        return res.json({ message: "user already exists!", valid, userExist: true })
     } else {
-        res.json({ valid, reason, validators })
+        const hashPassword = await bcrypt.hash(password, 15)
+        db.get().collection(collection.USER_COLLECTION).insertOne(
+            {
+                email: email,
+                password: hashPassword,
+                icon: '',
+                name: '',
+                domain: '',
+                bio: '',
+                portfolioLink: '',
+                workList: [],
+                postList: [],
+                savedPost: [],
+                verify: false
+            })
+        mailer.sendEmail(email)
+        return res.json({
+            message: "Verification is send to Your registered Email",
+            valid
+        })
     }
+
 
 })
 
