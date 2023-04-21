@@ -1,0 +1,9 @@
+POST http://localhost:5000/post/project
+content-type: application/json
+
+{
+    "title": "E-commerce",
+    "domain": "website",
+    "discription": "Nice web",
+    "payment": 10
+}
