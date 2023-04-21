@@ -111,7 +111,7 @@ router.post("/login", async (req, res) => {
                 res.json({ token, userID: user._id, validPassword: true, name: user.name })
             } else {
                 mailer.sendEmail(email)
-                res.json({ message: "Check Your Registered Email For Verify..!", verify: user.verify, valid })
+                res.json({ message: "Check Your Registered Email For Verify..!", verify: user.verify, valid:true })
             }
         }
     }
